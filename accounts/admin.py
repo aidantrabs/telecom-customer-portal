@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import Customer, Payment, Plan, Usage, User
+from .models import Customer, Outage, Payment, Plan, Usage, User
 
 
 @admin.register(User)
@@ -34,3 +34,9 @@ class UsageAdmin(admin.ModelAdmin):
 class PaymentAdmin(admin.ModelAdmin):
     list_display = ('customer', 'amount', 'paid_at')
     list_filter = ('paid_at',)
+
+
+@admin.register(Outage)
+class OutageAdmin(admin.ModelAdmin):
+    list_display = ('region', 'started_at', 'resolved_at')
+    list_filter = ('region',)

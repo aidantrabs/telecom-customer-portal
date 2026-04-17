@@ -59,3 +59,17 @@ class Payment(models.Model):
 
     def __str__(self):
         return f'{self.customer.account_number} - ${self.amount} on {self.paid_at:%Y-%m-%d}'
+
+
+class Outage(models.Model):
+    region = models.CharField(max_length=100)
+    description = models.TextField()
+    started_at = models.DateTimeField()
+    resolved_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['-started_at']
+
+    def __str__(self):
+        status = 'active' if self.resolved_at is None else 'resolved'
+        return f'{self.region} ({status}) - {self.started_at:%Y-%m-%d}'
