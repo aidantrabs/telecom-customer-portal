@@ -32,3 +32,18 @@ class Customer(models.Model):
 
     def __str__(self):
         return self.account_number
+
+
+class Usage(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='usage_records')
+    period_start = models.DateField()
+    data_used_mb = models.IntegerField(default=0)
+    calls_used_min = models.IntegerField(default=0)
+    sms_used = models.IntegerField(default=0)
+
+    class Meta:
+        unique_together = ('customer', 'period_start')
+        ordering = ['-period_start']
+
+    def __str__(self):
+        return f'{self.customer.account_number} - {self.period_start}'
