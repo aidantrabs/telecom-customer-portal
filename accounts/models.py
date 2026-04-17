@@ -12,9 +12,23 @@ class User(AbstractUser):
     role = models.CharField(max_length=20, choices=Role.choices, default=Role.CUSTOMER)
 
 
+class Plan(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    data_allowance_mb = models.IntegerField()
+    calls_allowance_min = models.IntegerField()
+    sms_allowance = models.IntegerField()
+    monthly_cost = models.DecimalField(max_digits=8, decimal_places=2)
+
+    def __str__(self):
+        return self.name
+
+
 class Customer(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='customer')
     account_number = models.CharField(max_length=20, unique=True)
+    plan = models.ForeignKey(Plan, on_delete=models.PROTECT, null=True, blank=True, related_name='customers')
+    balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    region = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
         return self.account_number
