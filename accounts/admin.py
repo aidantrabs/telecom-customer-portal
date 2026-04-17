@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import Customer, Plan, Usage, User
+from .models import Customer, Payment, Plan, Usage, User
 
 
 @admin.register(User)
@@ -28,3 +28,9 @@ class PlanAdmin(admin.ModelAdmin):
 class UsageAdmin(admin.ModelAdmin):
     list_display = ('customer', 'period_start', 'data_used_mb', 'calls_used_min', 'sms_used')
     list_filter = ('period_start',)
+
+
+@admin.register(Payment)
+class PaymentAdmin(admin.ModelAdmin):
+    list_display = ('customer', 'amount', 'paid_at')
+    list_filter = ('paid_at',)
