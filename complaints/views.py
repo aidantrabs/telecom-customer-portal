@@ -1,11 +1,23 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect, render
+
+from accounts.models import User
 
 from .forms import ComplaintForm
 
 
-@login_required
+def customer_required(view):
+    @login_required
+    def wrapper(request, *args, **kwargs):
+        if request.user.role != User.Role.CUSTOMER:
+            raise PermissionDenied
+        return view(request, *args, **kwargs)
+    return wrapper
+
+
+@customer_required
 def new_complaint(request):
     if request.method == 'POST':
         form = ComplaintForm(request.POST)
@@ -20,7 +32,7 @@ def new_complaint(request):
     return render(request, 'complaints/new.html', {'form': form})
 
 
-@login_required
+@customer_required
 def my_complaints(request):
     complaints = request.user.customer.complaints.all()
     return render(request, 'complaints/list.html', {'complaints': complaints})
