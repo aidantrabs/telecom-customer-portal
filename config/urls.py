@@ -22,5 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('complaints/', include('complaints.urls')),
-    path('', RedirectView.as_view(pattern_name='complaints:new', permanent=False)),
+    path('', RedirectView.as_view(pattern_name='complaints:list', permanent=False)),
 ]

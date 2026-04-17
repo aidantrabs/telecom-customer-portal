@@ -14,7 +14,13 @@ def new_complaint(request):
             complaint.customer = request.user.customer
             complaint.save()
             messages.success(request, 'Your complaint has been submitted.')
-            return redirect('complaints:new')
+            return redirect('complaints:list')
     else:
         form = ComplaintForm()
     return render(request, 'complaints/new.html', {'form': form})
+
+
+@login_required
+def my_complaints(request):
+    complaints = request.user.customer.complaints.all()
+    return render(request, 'complaints/list.html', {'complaints': complaints})
