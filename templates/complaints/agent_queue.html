@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Agent queue | Digicel{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4">Assigned complaints</h1>
+
+{% if complaints %}
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Customer</th>
+            <th>Category</th>
+            <th>Status</th>
+            <th>Age</th>
+            <th>Submitted</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for complaint in complaints %}
+        <tr>
+            <td>#{{ complaint.id }}</td>
+            <td>{{ complaint.customer.account_number }}</td>
+            <td>{{ complaint.get_category_display }}</td>
+            <td>{{ complaint.get_status_display }}</td>
+            <td>{{ complaint.created_at|timesince }}</td>
+            <td>{{ complaint.created_at|date:"M j, Y" }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p class="text-muted">No active complaints assigned to you.</p>
+{% endif %}
+{% endblock %}

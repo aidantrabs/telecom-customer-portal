@@ -22,5 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('complaints/', include('complaints.urls')),
+    path('agent/', include('complaints.agent_urls')),
     path('', RedirectView.as_view(pattern_name='complaints:list', permanent=False)),
 ]

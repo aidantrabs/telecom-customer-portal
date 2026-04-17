@@ -6,12 +6,22 @@ from django.shortcuts import redirect, render
 from accounts.models import User
 
 from .forms import ComplaintForm
+from .models import Complaint
 
 
 def customer_required(view):
     @login_required
     def wrapper(request, *args, **kwargs):
         if request.user.role != User.Role.CUSTOMER:
+            raise PermissionDenied
+        return view(request, *args, **kwargs)
+    return wrapper
+
+
+def agent_required(view):
+    @login_required
+    def wrapper(request, *args, **kwargs):
+        if request.user.role != User.Role.AGENT:
             raise PermissionDenied
         return view(request, *args, **kwargs)
     return wrapper
@@ -36,3 +46,16 @@ def new_complaint(request):
 def my_complaints(request):
     complaints = request.user.customer.complaints.all()
     return render(request, 'complaints/list.html', {'complaints': complaints})
+
+
+@agent_required
+def agent_queue(request):
+    active_statuses = [
+        Complaint.Status.OPEN,
+        Complaint.Status.IN_PROGRESS,
+        Complaint.Status.ESCALATED,
+    ]
+    complaints = request.user.assigned_complaints.filter(
+        status__in=active_statuses
+    ).order_by('created_at')
+    return render(request, 'complaints/agent_queue.html', {'complaints': complaints})
