@@ -8,7 +8,7 @@
 ![Bootstrap](https://img.shields.io/badge/bootstrap-5.3-7952B3?logo=bootstrap&logoColor=white)
 ![Groq](https://img.shields.io/badge/groq-llama--3.1--8b-F55036?logo=meta&logoColor=white)
 
-## overview
+## project overview
 
 the portal has two core modules:
 
@@ -48,7 +48,7 @@ three roles land on different views via a role-aware home redirect. all views sh
 
 no local python or postgres install required.
 
-## quick start
+## how to run
 
 **1. clone the repo**
 
@@ -76,7 +76,7 @@ app available at [localhost:8000](http://localhost:8000).
 > [!NOTE]
 > first startup runs migrations and seeds sample data automatically. seed is idempotent, so `docker compose up` is safe to run repeatedly.
 
-## seed data
+## how to seed the database
 
 the seed runs automatically on first startup. it creates:
 
@@ -96,7 +96,7 @@ docker compose up --build
 
 source: [`accounts/management/commands/seed.py`](accounts/management/commands/seed.py).
 
-## credentials
+## default login credentials
 
 | role | username | password | lands at |
 |---|---|---|---|
@@ -106,7 +106,9 @@ source: [`accounts/management/commands/seed.py`](accounts/management/commands/se
 
 root `/` redirects based on role after login.
 
-## environment
+## environment setup
+
+copy `.env.example` to `.env` and fill in values for the variables below.
 
 | variable | purpose |
 |---|---|
@@ -121,9 +123,9 @@ root `/` redirects based on role after login.
 > [!IMPORTANT]
 > `.env` is gitignored. a populated copy is attached separately as `env_config.txt` per submission instructions.
 
-## chatbot
+## chatbot setup
 
-lives at `/chat/` for any logged-in customer.
+lives at `/chat/` for any logged-in customer. works immediately once `GROQ_API_KEY` is set in `.env`.
 
 ```mermaid
 flowchart LR
@@ -150,7 +152,7 @@ try asking:
 - when was my last payment?
 - do i have any open complaints?
 
-## design decisions
+## assumptions & design decisions
 
 ### architecture
 
