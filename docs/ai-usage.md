@@ -147,4 +147,20 @@ Each fix is its own atomic commit. Prompts and outcomes below.
 
 **Verification:** clicked the clear button, dialog appeared. "Cancel" left history intact; "OK" wiped as before.
 
+#### Fix 11.7 - Role mismatch redirects to home instead of 403 (HIGH, usability)
+
+**Prompt:** fix post-login 403 when a non-customer user's `?next=` param points at a customer URL; add the Admin site link and active-state highlighting to nav.
+
+**Files changed:** `accounts/decorators.py`, `complaints/views.py`, `templates/base.html`.
+
+**What changed:**
+- All three role decorators (`customer_required`, `agent_required`, `admin_required`) now `return redirect('home')` when the role check fails, instead of `raise PermissionDenied`. The `home` view dispatches to the right landing page based on the authenticated user's role.
+- Removed now-unused `PermissionDenied` imports from both `accounts/decorators.py` and `complaints/views.py`, added `redirect` where needed.
+- Nav items now use `request.resolver_match.namespace` (and `url_name` for flat routes like `/account/`) to apply an active-state style (`text-white fw-semibold` vs `text-white-50`) so the user sees where they are.
+- Admin users get an extra `Admin site` link (to `/admin/`) in the nav.
+
+**Why:** the original behavior meant an admin with a bookmarked customer URL would log in, follow `?next=`, and get hit with a 403 page. Every subsequent click had to go through the navbar brand or a manually-typed URL. Soft-redirecting to `home` means the login flow always lands them on their correct dashboard regardless of `?next=`. The 403 template still exists and is still rendered for non-role failures (CSRF, Django-level permission errors).
+
+**Verification:** logged in as `portal_admin` with `?next=/complaints/` appended, confirmed landing on `/dashboard/` instead of 403. Same pattern as `agent1` hitting `/chat/` - redirects to `/agent/`. Nav active state checked on all role landing pages.
+
 <!-- next fixes go here -->
