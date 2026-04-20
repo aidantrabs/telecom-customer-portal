@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 
+from .decorators import customer_required
 from .models import User
 
 
@@ -12,3 +13,16 @@ def home(request):
     if role == User.Role.AGENT:
         return redirect('agent:queue')
     return redirect('complaints:list')
+
+
+@customer_required
+def account(request):
+    customer = request.user.customer
+    usage = customer.usage_records.order_by('-period_start').first()
+    last_payment = customer.payments.first()
+    return render(request, 'accounts/account.html', {
+        'customer': customer,
+        'plan': customer.plan,
+        'usage': usage,
+        'last_payment': last_payment,
+    })

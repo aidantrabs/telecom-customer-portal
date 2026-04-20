@@ -11,7 +11,16 @@
         <div class="container">
             <a class="navbar-brand" href="/">Digicel Portal</a>
             {% if user.is_authenticated %}
-                <div class="d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    {% if user.role == 'customer' %}
+                        <a href="{% url 'complaints:list' %}" class="text-white-50 text-decoration-none small">Complaints</a>
+                        <a href="{% url 'account' %}" class="text-white-50 text-decoration-none small">Account</a>
+                        <a href="{% url 'chat:home' %}" class="text-white-50 text-decoration-none small">Chat</a>
+                    {% elif user.role == 'agent' %}
+                        <a href="{% url 'agent:queue' %}" class="text-white-50 text-decoration-none small">Queue</a>
+                    {% elif user.role == 'admin' %}
+                        <a href="{% url 'dashboard:home' %}" class="text-white-50 text-decoration-none small">Dashboard</a>
+                    {% endif %}
                     <span class="text-white-50 small">{{ user.username }}</span>
                     <form method="post" action="{% url 'logout' %}" class="m-0">
                         {% csrf_token %}
