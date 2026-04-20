@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Complaint #{{ complaint.id }} | Digicel{% endblock %}
+{% block title %}Complaint #{{ complaint.id }} | Telecom Customer Portal{% endblock %}
 
 {% block content %}
 <a href="{% url 'agent:queue' %}" class="text-muted small">&larr; Back to queue</a>
@@ -38,7 +38,7 @@
     </div>
 
     <div class="col-md-5">
-        <form method="post" class="card p-3">
+        <form method="post" class="card shadow-sm p-3">
             {% csrf_token %}
             <h2 class="h5 mb-3">Update</h2>
 

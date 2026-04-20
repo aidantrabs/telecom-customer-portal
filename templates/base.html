@@ -3,26 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Telecom Customer Portal | Digicel{% endblock %}</title>
+    <title>{% block title %}Telecom Customer Portal{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .card { border-color: #e9ecef; }
+        .table > :not(caption) > * > * { padding: 0.85rem 1rem; }
+        .navbar { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+        .navbar-brand { letter-spacing: 0.01em; }
+        .navbar .nav-link-item { transition: color 0.15s ease-in-out; }
+        .navbar .nav-link-item:hover { color: rgba(255, 255, 255, 0.95) !important; }
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-dark bg-dark">
+    <nav class="navbar navbar-dark bg-dark shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="/">Digicel Portal</a>
+            <a class="navbar-brand fw-bold" href="/">Telecom Customer Portal</a>
             {% if user.is_authenticated %}
                 <div class="d-flex align-items-center gap-3 flex-wrap">
                     {% if user.role == 'customer' %}
-                        <a href="{% url 'complaints:list' %}" class="text-decoration-none small {% if request.resolver_match.namespace == 'complaints' %}text-white fw-semibold{% else %}text-white-50{% endif %}">Complaints</a>
-                        <a href="{% url 'account' %}" class="text-decoration-none small {% if request.resolver_match.url_name == 'account' %}text-white fw-semibold{% else %}text-white-50{% endif %}">Account</a>
-                        <a href="{% url 'chat:home' %}" class="text-decoration-none small {% if request.resolver_match.namespace == 'chat' %}text-white fw-semibold{% else %}text-white-50{% endif %}">Chat</a>
+                        <a href="{% url 'complaints:list' %}" class="nav-link-item text-decoration-none small {% if request.resolver_match.namespace == 'complaints' %}text-white fw-semibold{% else %}text-white-50{% endif %}">Complaints</a>
+                        <a href="{% url 'account' %}" class="nav-link-item text-decoration-none small {% if request.resolver_match.url_name == 'account' %}text-white fw-semibold{% else %}text-white-50{% endif %}">Account</a>
+                        <a href="{% url 'chat:home' %}" class="nav-link-item text-decoration-none small {% if request.resolver_match.namespace == 'chat' %}text-white fw-semibold{% else %}text-white-50{% endif %}">Chat</a>
                     {% elif user.role == 'agent' %}
-                        <a href="{% url 'agent:queue' %}" class="text-decoration-none small {% if request.resolver_match.namespace == 'agent' %}text-white fw-semibold{% else %}text-white-50{% endif %}">Queue</a>
+                        <a href="{% url 'agent:queue' %}" class="nav-link-item text-decoration-none small {% if request.resolver_match.namespace == 'agent' %}text-white fw-semibold{% else %}text-white-50{% endif %}">Queue</a>
                     {% elif user.role == 'admin' %}
-                        <a href="{% url 'dashboard:home' %}" class="text-decoration-none small {% if request.resolver_match.namespace == 'dashboard' %}text-white fw-semibold{% else %}text-white-50{% endif %}">Dashboard</a>
-                        <a href="/admin/" class="text-white-50 text-decoration-none small">Admin site</a>
+                        <a href="{% url 'dashboard:home' %}" class="nav-link-item text-decoration-none small {% if request.resolver_match.namespace == 'dashboard' %}text-white fw-semibold{% else %}text-white-50{% endif %}">Dashboard</a>
+                        <a href="/admin/" class="nav-link-item text-white-50 text-decoration-none small">Admin site</a>
                     {% endif %}
-                    <span class="text-white-50 small">{{ user.username }}</span>
+                    <span class="text-white-50 small border-start border-secondary ps-3">{{ user.username }}</span>
                     <form method="post" action="{% url 'logout' %}" class="m-0">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-sm btn-outline-light">Log out</button>

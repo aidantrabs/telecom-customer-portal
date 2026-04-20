@@ -1,32 +1,32 @@
 {% extends 'base.html' %}
 
-{% block title %}My account | Digicel{% endblock %}
+{% block title %}My account | Telecom Customer Portal{% endblock %}
 
 {% block content %}
 <h1 class="h3 mb-4">My account</h1>
 
 <div class="row g-3 mb-4">
     <div class="col-md-4">
-        <div class="card p-3 h-100">
+        <div class="card shadow-sm p-3 h-100">
             <h2 class="h6 text-muted text-uppercase mb-2">Account number</h2>
             <p class="h4 mb-0">{{ customer.account_number }}</p>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card p-3 h-100">
+        <div class="card shadow-sm p-3 h-100">
             <h2 class="h6 text-muted text-uppercase mb-2">Balance</h2>
             <p class="h4 mb-0">${{ customer.balance }}</p>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card p-3 h-100">
+        <div class="card shadow-sm p-3 h-100">
             <h2 class="h6 text-muted text-uppercase mb-2">Region</h2>
             <p class="h4 mb-0">{{ customer.region|default:"-" }}</p>
         </div>
     </div>
 </div>
 
-<div class="card p-3 mb-4">
+<div class="card shadow-sm p-3 mb-4">
     <h2 class="h5 mb-3">Plan</h2>
     {% if plan %}
         <p class="mb-3"><strong>{{ plan.name }}</strong> <span class="text-muted">· ${{ plan.monthly_cost }} / month</span></p>
@@ -43,7 +43,7 @@
     {% endif %}
 </div>
 
-<div class="card p-3 mb-4">
+<div class="card shadow-sm p-3 mb-4">
     <h2 class="h5 mb-3">This month's usage</h2>
     {% if usage %}
         <dl class="row mb-0">
@@ -59,7 +59,7 @@
     {% endif %}
 </div>
 
-<div class="card p-3">
+<div class="card shadow-sm p-3">
     <h2 class="h5 mb-3">Last payment</h2>
     {% if last_payment %}
         <p class="mb-0">${{ last_payment.amount }} on {{ last_payment.paid_at|date:"M j, Y" }}</p>
