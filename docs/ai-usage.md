@@ -91,4 +91,60 @@ Each fix is its own atomic commit. Prompts and outcomes below.
 
 **Verification:** `DEBUG=1` (dev default) - confirmed no behavior change, app runs as before. Switched `DEBUG=0` temporarily and confirmed the security settings activate via `python manage.py diffsettings`.
 
+#### Fix 11.3 - Chat loading indicator and auto-scroll (HIGH, usability)
+
+**Prompt:** add a "thinking" state to the chat form and auto-scroll to the latest message on page load.
+
+**Files changed:** `templates/chat/chat.html`.
+
+**What changed:**
+- Added a small inline `<script>` at the bottom of the chat template.
+- On page load: `window.scrollTo(0, document.body.scrollHeight)` brings the most recent turn and the input field into view.
+- On form submit: disable the input and the submit button, and change the button text to "Thinking..." so the user sees immediate feedback while the LLM processes (2-5s).
+- Input also gained `maxlength="1000"` as a browser-side enforcement of the server-side question length cap from fix 11.1.
+
+**Why:** the previous experience looked broken: submit the form, page sits for several seconds with no indication anything is happening. After the response, the page reloads but the scroll position stays at the top, hiding the new content below the fold. These are small, vanilla-JS tweaks; no framework needed.
+
+**Verification:** rendered the chat page in docker, submitted a question, confirmed the button flipped to "Thinking..." immediately and the page auto-scrolled to reveal the new turn after reload.
+
+#### Fix 11.4 - Custom error pages (MEDIUM, usability)
+
+**Prompt:** add branded templates for 404, 403, and 500 so production error pages do not show the default Django error screen.
+
+**Files changed:** `templates/404.html`, `templates/403.html`, `templates/500.html` (new files).
+
+**What changed:** three templates extending `base.html`. Each shows the status code prominently, a short human-readable explanation, and a "Back to home" button. 403 specifically calls out "this page is restricted to a different role" because PermissionDenied from the role decorators is the most common path to that template.
+
+**Why:** with `DEBUG=False` (production), Django looks for `404.html`, `403.html`, and `500.html` at the top level of the template search path. Without them, reviewers (and hypothetical users) see raw Django error screens which look unprofessional. With `DEBUG=True` these templates are ignored and the default debug traceback is shown instead, so dev workflow is unaffected.
+
+**Verification:** temporarily set `DEBUG=0` and visited `/this-does-not-exist`, confirmed the 404 template rendered. Visited a customer-only URL as agent1 and confirmed the 403 template rendered. Restored `DEBUG=1` for continued development.
+
+#### Fix 11.5 - Customer account view and role-based nav (MEDIUM, usability)
+
+**Prompt:** add a customer-facing account page showing plan, balance, usage, region, and last payment at a glance; wire role-based navigation so each role can reach their main pages.
+
+**Files changed:** `accounts/views.py`, `config/urls.py`, `templates/accounts/account.html` (new), `templates/base.html`.
+
+**What changed:**
+- New `account` view in `accounts/views.py` decorated with `@customer_required`. Pulls the customer, latest usage record, and latest payment, renders `templates/accounts/account.html`.
+- New URL `path('account/', account, name='account')` in `config/urls.py`.
+- New template with card-based layout: three top cards for account number / balance / region, then sections for plan (name + allowances), current-period usage (vs plan allowances), and last payment.
+- Navbar in `base.html` now renders role-specific links: customers see Complaints / Account / Chat; agents see Queue; admins see Dashboard. Username and logout button stay on the right.
+
+**Why:** previously, a customer could only see their plan / balance / usage by asking the chatbot. Having a plain page with the same data is standard telecom-portal UX and lets reviewers verify the underlying data without going through the LLM. Role-based nav closes a smaller gap: previously customers had no way to reach `/chat/` or `/account/` without typing the URL.
+
+**Verification:** logged in as `customer1`, confirmed the nav now has three links, visited `/account/` and confirmed all cards populated correctly from seed data. Logged in as `agent1` and confirmed only the Queue link appears. Same for `portal_admin` / Dashboard.
+
+#### Fix 11.6 - Clear conversation confirmation (LOW, usability)
+
+**Prompt:** require a browser confirm before the clear-conversation button wipes chat history.
+
+**Files changed:** `templates/chat/chat.html`.
+
+**What changed:** added `onsubmit="return confirm('Clear this conversation?');"` to the clear-history form. Native browser dialog, no JS dependency.
+
+**Why:** one misclick on the small "Clear conversation" button loses the whole session history. Not data-destructive, but annoying. A native confirm dialog is the minimum cost fix.
+
+**Verification:** clicked the clear button, dialog appeared. "Cancel" left history intact; "OK" wiped as before.
+
 <!-- next fixes go here -->
