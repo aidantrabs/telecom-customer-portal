@@ -1,6 +1,6 @@
 # telecom customer portal
 
-> django portal for a trinidad telecom. complaint management and a data-grounded ai chatbot.
+> a customer portal for a trinidad telecom operator; covers the complaint management workflow and an ai chatbot that answers account questions from each customer's real data.
 
 ![Python](https://img.shields.io/badge/python-3.14-3776AB?logo=python&logoColor=white)
 ![Django](https://img.shields.io/badge/django-6.0-092E20?logo=django&logoColor=white)
@@ -10,7 +10,7 @@
 
 ## overview
 
-two modules built as a take-home assessment:
+the portal has two core modules:
 
 | module | what it does |
 |---|---|
