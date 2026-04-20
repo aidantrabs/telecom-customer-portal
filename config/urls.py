@@ -25,5 +25,6 @@ urlpatterns = [
     path('complaints/', include('complaints.urls')),
     path('agent/', include('complaints.agent_urls')),
     path('dashboard/', include('complaints.dashboard_urls')),
+    path('chat/', include('chat.urls')),
     path('', home, name='home'),
 ]

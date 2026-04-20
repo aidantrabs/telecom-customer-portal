@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Chat | Digicel{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Ask about your account</h1>
+    {% if history %}
+    <form method="post" class="m-0">
+        {% csrf_token %}
+        <button type="submit" name="clear" value="1" class="btn btn-sm btn-outline-secondary">Clear conversation</button>
+    </form>
+    {% endif %}
+</div>
+
+<div class="mb-4">
+    {% if history %}
+        {% for message in history %}
+            {% if message.role == 'user' %}
+                <div class="d-flex justify-content-end mb-3">
+                    <div class="card bg-primary text-white border-0" style="max-width: 75%;">
+                        <div class="card-body p-2 px-3">{{ message.content }}</div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="d-flex justify-content-start mb-3">
+                    <div style="max-width: 75%;">
+                        <div class="card {% if message.error %}border-danger{% endif %}">
+                            <div class="card-body p-2 px-3">{{ message.content|linebreaksbr }}</div>
+                        </div>
+                        {% if message.sources %}
+                        <div class="mt-1 small text-muted">
+                            Sources:
+                            {% for source in message.sources %}
+                                <span class="badge bg-light text-dark border fw-normal me-1">{{ source }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        <p class="text-muted">Ask a question about your plan, balance, usage, complaints, payments, or local service faults.</p>
+    {% endif %}
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="input-group">
+        <input type="text" name="question" class="form-control" placeholder="Ask a question..." required autofocus>
+        <button type="submit" class="btn btn-primary">Send</button>
+    </div>
+</form>
+{% endblock %}
