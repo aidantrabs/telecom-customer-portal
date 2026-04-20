@@ -6,6 +6,10 @@ from .generation import generate_answer
 from .retrieval import context_sources, get_customer_context
 
 
+MAX_HISTORY_MESSAGES = 20
+MAX_QUESTION_LENGTH = 1000
+
+
 @customer_required
 def chat(request):
     history = request.session.get('chat_history', [])
@@ -17,6 +21,9 @@ def chat(request):
             return redirect('chat:home')
 
         question = request.POST.get('question', '').strip()
+        if len(question) > MAX_QUESTION_LENGTH:
+            question = question[:MAX_QUESTION_LENGTH]
+
         if question:
             context = get_customer_context(request.user.customer)
             llm_history = [{'role': m['role'], 'content': m['content']} for m in history]
@@ -33,6 +40,10 @@ def chat(request):
                     'sources': [],
                     'error': True,
                 })
+
+            if len(history) > MAX_HISTORY_MESSAGES:
+                history = history[-MAX_HISTORY_MESSAGES:]
+
             request.session['chat_history'] = history
             request.session.modified = True
         return redirect('chat:home')
