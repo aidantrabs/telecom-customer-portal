@@ -20,7 +20,7 @@
     <tbody>
         {% for complaint in complaints %}
         <tr>
-            <td>#{{ complaint.id }}</td>
+            <td><a href="{% url 'agent:detail' complaint.pk %}">#{{ complaint.id }}</a></td>
             <td>{{ complaint.customer.account_number }}</td>
             <td>{{ complaint.get_category_display }}</td>
             <td>{{ complaint.get_status_display }}</td>

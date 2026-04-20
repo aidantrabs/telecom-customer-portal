@@ -6,4 +6,5 @@ app_name = 'agent'
 
 urlpatterns = [
     path('', views.agent_queue, name='queue'),
+    path('<int:pk>/', views.agent_complaint_detail, name='detail'),
 ]
