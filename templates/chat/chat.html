@@ -6,7 +6,7 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="h3 mb-0">Ask about your account</h1>
     {% if history %}
-    <form method="post" class="m-0">
+    <form method="post" class="m-0" onsubmit="return confirm('Clear this conversation?');">
         {% csrf_token %}
         <button type="submit" name="clear" value="1" class="btn btn-sm btn-outline-secondary">Clear conversation</button>
     </form>
@@ -45,11 +45,31 @@
     {% endif %}
 </div>
 
-<form method="post">
+<form method="post" data-chat-form>
     {% csrf_token %}
     <div class="input-group">
-        <input type="text" name="question" class="form-control" placeholder="Ask a question..." required autofocus>
-        <button type="submit" class="btn btn-primary">Send</button>
+        <input type="text" name="question" class="form-control" placeholder="Ask a question..." required autofocus maxlength="1000">
+        <button type="submit" class="btn btn-primary" data-chat-submit>Send</button>
     </div>
 </form>
+
+<script>
+(function () {
+    // scroll to the bottom so the latest turn is in view
+    window.scrollTo(0, document.body.scrollHeight);
+
+    // show a loading state while the llm is thinking
+    var form = document.querySelector('[data-chat-form]');
+    if (!form) return;
+    var input = form.querySelector('input[name="question"]');
+    var submit = form.querySelector('[data-chat-submit]');
+    form.addEventListener('submit', function () {
+        if (input) input.disabled = true;
+        if (submit) {
+            submit.disabled = true;
+            submit.textContent = 'Thinking...';
+        }
+    });
+})();
+</script>
 {% endblock %}
