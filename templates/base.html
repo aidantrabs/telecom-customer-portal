@@ -13,13 +13,14 @@
             {% if user.is_authenticated %}
                 <div class="d-flex align-items-center gap-3 flex-wrap">
                     {% if user.role == 'customer' %}
-                        <a href="{% url 'complaints:list' %}" class="text-white-50 text-decoration-none small">Complaints</a>
-                        <a href="{% url 'account' %}" class="text-white-50 text-decoration-none small">Account</a>
-                        <a href="{% url 'chat:home' %}" class="text-white-50 text-decoration-none small">Chat</a>
+                        <a href="{% url 'complaints:list' %}" class="text-decoration-none small {% if request.resolver_match.namespace == 'complaints' %}text-white fw-semibold{% else %}text-white-50{% endif %}">Complaints</a>
+                        <a href="{% url 'account' %}" class="text-decoration-none small {% if request.resolver_match.url_name == 'account' %}text-white fw-semibold{% else %}text-white-50{% endif %}">Account</a>
+                        <a href="{% url 'chat:home' %}" class="text-decoration-none small {% if request.resolver_match.namespace == 'chat' %}text-white fw-semibold{% else %}text-white-50{% endif %}">Chat</a>
                     {% elif user.role == 'agent' %}
-                        <a href="{% url 'agent:queue' %}" class="text-white-50 text-decoration-none small">Queue</a>
+                        <a href="{% url 'agent:queue' %}" class="text-decoration-none small {% if request.resolver_match.namespace == 'agent' %}text-white fw-semibold{% else %}text-white-50{% endif %}">Queue</a>
                     {% elif user.role == 'admin' %}
-                        <a href="{% url 'dashboard:home' %}" class="text-white-50 text-decoration-none small">Dashboard</a>
+                        <a href="{% url 'dashboard:home' %}" class="text-decoration-none small {% if request.resolver_match.namespace == 'dashboard' %}text-white fw-semibold{% else %}text-white-50{% endif %}">Dashboard</a>
+                        <a href="/admin/" class="text-white-50 text-decoration-none small">Admin site</a>
                     {% endif %}
                     <span class="text-white-50 small">{{ user.username }}</span>
                     <form method="post" action="{% url 'logout' %}" class="m-0">

@@ -2,7 +2,6 @@ from datetime import timedelta
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
 from django.db.models import Avg, DurationField, ExpressionWrapper, F
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -31,7 +30,7 @@ def customer_required(view):
     @login_required
     def wrapper(request, *args, **kwargs):
         if request.user.role != User.Role.CUSTOMER:
-            raise PermissionDenied
+            return redirect('home')
         return view(request, *args, **kwargs)
     return wrapper
 
@@ -40,7 +39,7 @@ def agent_required(view):
     @login_required
     def wrapper(request, *args, **kwargs):
         if request.user.role != User.Role.AGENT:
-            raise PermissionDenied
+            return redirect('home')
         return view(request, *args, **kwargs)
     return wrapper
 
@@ -49,7 +48,7 @@ def admin_required(view):
     @login_required
     def wrapper(request, *args, **kwargs):
         if request.user.role != User.Role.ADMIN:
-            raise PermissionDenied
+            return redirect('home')
         return view(request, *args, **kwargs)
     return wrapper
 
