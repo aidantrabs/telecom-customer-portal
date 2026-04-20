@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 
 from accounts.models import Customer
 
@@ -33,9 +34,16 @@ class Complaint(models.Model):
     internal_notes = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    resolved_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ['-created_at']
 
     def __str__(self):
         return f'{self.get_category_display()} - {self.customer.account_number}'
+
+    def save(self, *args, **kwargs):
+        terminal = (self.Status.RESOLVED, self.Status.CLOSED)
+        if self.status in terminal and self.resolved_at is None:
+            self.resolved_at = timezone.now()
+        super().save(*args, **kwargs)
