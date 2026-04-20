@@ -116,6 +116,7 @@ root `/` redirects based on role after login.
 | `DJANGO_SECRET_KEY` | any long random string |
 | `GROQ_API_KEY` | groq api key for chatbot |
 | `DEBUG` | `1` for development, `0` for production |
+| `ALLOWED_HOSTS` | comma-separated hostnames django will serve (defaults to `localhost,127.0.0.1`) |
 
 > [!IMPORTANT]
 > `.env` is gitignored. a populated copy is attached separately as `env_config.txt` per submission instructions.

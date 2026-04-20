@@ -75,4 +75,20 @@ Each fix is its own atomic commit. Prompts and outcomes below.
 
 **Verification:** sent 15+ messages as customer1, confirmed session payload stayed bounded. Pasted a 2000-character question and confirmed truncation.
 
+#### Fix 11.2 - Production-safe security settings and env-driven ALLOWED_HOSTS (HIGH, security)
+
+**Prompt:** add Django's production security headers behind a `DEBUG=False` conditional, and switch `ALLOWED_HOSTS` to read from an environment variable with a dev default.
+
+**Files changed:** `config/settings.py`, `.env.example`, `README.md`.
+
+**What changed:**
+- `ALLOWED_HOSTS` now reads from `os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')`. Dev works out of the box; production sets a real comma-separated hostname list.
+- New `if not DEBUG:` block in `settings.py` enabling: `SESSION_COOKIE_SECURE`, `CSRF_COOKIE_SECURE`, `SECURE_SSL_REDIRECT`, `SECURE_HSTS_SECONDS=31_536_000` with subdomains + preload, `SECURE_CONTENT_TYPE_NOSNIFF`, `SECURE_REFERRER_POLICY='same-origin'`.
+- `.env.example` documents `ALLOWED_HOSTS`.
+- README env table gained an `ALLOWED_HOSTS` row.
+
+**Why:** the previous config shipped hardcoded `['localhost', '127.0.0.1']` which would silently 400 a real deployment. Cookie-secure and HSTS headers are free defenses when DEBUG is off. They are gated by `DEBUG` because enabling `SECURE_SSL_REDIRECT` locally would force HTTPS on `http://localhost` and loop.
+
+**Verification:** `DEBUG=1` (dev default) - confirmed no behavior change, app runs as before. Switched `DEBUG=0` temporarily and confirmed the security settings activate via `python manage.py diffsettings`.
+
 <!-- next fixes go here -->
